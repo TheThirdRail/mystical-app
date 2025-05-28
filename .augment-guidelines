@@ -1,0 +1,45 @@
+# METAMYSTIC PROJECT RULES  v1.0
+## 0 Scope
+• One code-base (Python) powers API for Web + RN/Flutter mobile clients.  
+• Features: astrology (trop/sidereal), Chinese zodiac, numerology, tarot.  
+• Partners get isolated “personas” (pic, bio, custom decks/spreads, rule-overrides, prompt-snippets).
+
+## 1 Architecture
+• Backend: FastAPI + PostgreSQL + object storage (S3/R2).  
+• Mobile: React Native (JS/TS). Web: React.  
+• Ephemeris via Kerykeion; Chinese zodiac via chinese-zodiac lib; numerology via numerology pkg.  
+• Tarot deck & meanings JSON (+PNG/SVG). Custom deck = folder of imgs + `deck.json` with `id, name, upright, reversed`.  
+• All spreads defined in `spreads.json` (positions array). Card orientation randomized per draw.
+
+## 2 Modularity
+`/core/astro`, `/core/num`, `/core/tarot`; each pure-func, no DB calls.  
+`/services/ai` wraps LLM call; supports provider switch (`OPENAI_ KEY`, `ANTHROPIC_ KEY`, `GPT4FREE_HOST`).  
+`/partners/<slug>/` holds persona assets + rule overrides + prompt stubs.
+
+## 3 Data & Security
+• DB tables: Partner, Persona, Deck, Card, Spread, Reading, Payment.  
+• Each reading row records partner_id for revenue split.  
+• Admin endpoint `/reports/earnings?month=YYYY-MM` returns totals per partner.  
+• Never log PII; HTTPS only; API keys in `.env`.  
+• Uploaded media stored under `partners/<slug>/media/…`.
+
+## 4 AI Output Guardrails
+• Always frame negatives as growth opportunities (“challenge → improve”).  
+• Inject partner prompt-stub + custom rules before system prompt.  
+• If conflict, partner rule wins.
+
+## 5 Testing & CI
+• 90 % unit coverage on core calc.  
+• Snapshot tests for tarot draw reproducibility (seeded).  
+• Docker compose must build & pass tests: `./scripts/test_all.sh`.
+
+## 6 Deployment
+• Dev: single VPS (1 vCPU, 1 GB) with Docker Compose.  
+• Scale: move DB to managed Postgres, add load-balanced API pods.
+
+## 7 Coding Standards
+• Follow PEP8; files ≤300 lines; keep functions pure unless noted.  
+• Use Pydantic models for I/O; validate partner configs on upload.  
+• Commit msg: `<feat|fix|refactor>: <scope> - <summary>`.
+
+# END

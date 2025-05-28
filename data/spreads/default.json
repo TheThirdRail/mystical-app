@@ -1,0 +1,273 @@
+{
+  "spreads": [
+    {
+      "slug": "one_card",
+      "name": "One Card",
+      "description": "A simple one-card draw for quick guidance and daily insight",
+      "card_count": 1,
+      "difficulty": "beginner",
+      "categories": ["daily", "quick", "guidance"],
+      "instructions": "Focus on your question or situation while shuffling. Draw one card for immediate guidance.",
+      "positions": [
+        {
+          "name": "Guidance",
+          "description": "What you need to know right now",
+          "x": 0,
+          "y": 0,
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "slug": "three_card",
+      "name": "Three Card",
+      "description": "Past, Present, Future spread for understanding life's flow",
+      "card_count": 3,
+      "difficulty": "beginner",
+      "categories": ["timeline", "general", "popular"],
+      "instructions": "Think about your situation while shuffling. Draw three cards to understand the progression of events.",
+      "positions": [
+        {
+          "name": "Past",
+          "description": "Past influences affecting the current situation",
+          "x": -1,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Present",
+          "description": "Current situation and energies at play",
+          "x": 0,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Future",
+          "description": "Likely outcome or future influences",
+          "x": 1,
+          "y": 0,
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "slug": "love_triangle",
+      "name": "Love Triangle",
+      "description": "Three-card spread focused on love and relationships",
+      "card_count": 3,
+      "difficulty": "beginner",
+      "categories": ["love", "relationships"],
+      "instructions": "Focus on your relationship question while shuffling.",
+      "positions": [
+        {
+          "name": "You",
+          "description": "Your role and feelings in the relationship",
+          "x": -1,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Them",
+          "description": "Their role and feelings in the relationship",
+          "x": 1,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Relationship",
+          "description": "The relationship dynamic and potential",
+          "x": 0,
+          "y": 1,
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "slug": "decision_making",
+      "name": "Decision Making",
+      "description": "Five-card spread for making important choices",
+      "card_count": 5,
+      "difficulty": "intermediate",
+      "categories": ["decisions", "choices", "guidance"],
+      "instructions": "Think about your decision while shuffling. This spread will help you see all aspects.",
+      "positions": [
+        {
+          "name": "Situation",
+          "description": "Current situation requiring a decision",
+          "x": 0,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Option A",
+          "description": "First choice and its potential outcome",
+          "x": -1,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "Option B",
+          "description": "Second choice and its potential outcome",
+          "x": 1,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "Hidden Factors",
+          "description": "What you may not be considering",
+          "x": 0,
+          "y": -1,
+          "rotation": 0
+        },
+        {
+          "name": "Guidance",
+          "description": "Advice for making the best choice",
+          "x": 0,
+          "y": 2,
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "slug": "celtic_cross",
+      "name": "Celtic Cross",
+      "description": "Comprehensive 10-card spread for deep insight into any situation",
+      "card_count": 10,
+      "difficulty": "advanced",
+      "categories": ["comprehensive", "detailed", "traditional"],
+      "instructions": "This is the most detailed spread. Focus deeply on your question while shuffling.",
+      "positions": [
+        {
+          "name": "Present Situation",
+          "description": "The heart of the matter, current state of affairs",
+          "x": 0,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Challenge",
+          "description": "What crosses you, obstacles or challenges",
+          "x": 0,
+          "y": 0,
+          "rotation": 90
+        },
+        {
+          "name": "Distant Past",
+          "description": "Foundation of the situation, distant past influences",
+          "x": 0,
+          "y": -1,
+          "rotation": 0
+        },
+        {
+          "name": "Recent Past",
+          "description": "Recent events that led to the current situation",
+          "x": -1,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Possible Outcome",
+          "description": "What may come to pass if things continue as they are",
+          "x": 0,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "Near Future",
+          "description": "What is approaching in the immediate future",
+          "x": 1,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Your Approach",
+          "description": "How you approach the situation, your role",
+          "x": 2,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "External Influences",
+          "description": "How others see you, external factors",
+          "x": 2,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Hopes and Fears",
+          "description": "Your inner feelings, hopes and fears",
+          "x": 2,
+          "y": -1,
+          "rotation": 0
+        },
+        {
+          "name": "Final Outcome",
+          "description": "The ultimate result, final outcome",
+          "x": 2,
+          "y": -2,
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "slug": "horseshoe",
+      "name": "Horseshoe",
+      "description": "Seven-card spread in horseshoe shape for life guidance",
+      "card_count": 7,
+      "difficulty": "intermediate",
+      "categories": ["guidance", "life", "traditional"],
+      "instructions": "Focus on your life situation while shuffling. This spread provides comprehensive guidance.",
+      "positions": [
+        {
+          "name": "Past",
+          "description": "Past influences and experiences",
+          "x": -3,
+          "y": 0,
+          "rotation": 0
+        },
+        {
+          "name": "Present",
+          "description": "Current situation and energies",
+          "x": -2,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "Hidden Influences",
+          "description": "Hidden factors affecting the situation",
+          "x": -1,
+          "y": 1.5,
+          "rotation": 0
+        },
+        {
+          "name": "Advice",
+          "description": "Guidance and advice for moving forward",
+          "x": 0,
+          "y": 2,
+          "rotation": 0
+        },
+        {
+          "name": "External Influences",
+          "description": "Outside forces and other people's influence",
+          "x": 1,
+          "y": 1.5,
+          "rotation": 0
+        },
+        {
+          "name": "Near Future",
+          "description": "What to expect in the near future",
+          "x": 2,
+          "y": 1,
+          "rotation": 0
+        },
+        {
+          "name": "Final Outcome",
+          "description": "The likely final outcome",
+          "x": 3,
+          "y": 0,
+          "rotation": 0
+        }
+      ]
+    }
+  ]
+}
