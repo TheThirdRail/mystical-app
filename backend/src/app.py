@@ -10,6 +10,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
@@ -17,6 +18,7 @@ from src.core.config import settings
 from src.core.database import engine, Base
 from src.api.v1.router import api_router
 from src.core.exceptions import MetaMysticException
+from src.middleware import RateLimitMiddleware, SecurityHeadersMiddleware
 
 
 @asynccontextmanager
@@ -46,18 +48,28 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add middleware
+# Add middleware (order matters!)
+# Security headers should be first
+app.add_middleware(SecurityHeadersMiddleware)
+
+# HTTPS redirect should be early (but after security headers)
+if not settings.DEBUG:
+    app.add_middleware(HTTPSRedirectMiddleware)
+
+# Rate limiting
+app.add_middleware(RateLimitMiddleware)
+
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"] if settings.DEBUG else ["metamystic.com", "*.metamystic.com"],
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
-
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"] if settings.DEBUG else ["metamystic.com", "*.metamystic.com"],
 )
 
 

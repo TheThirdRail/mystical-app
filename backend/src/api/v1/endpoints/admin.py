@@ -2,15 +2,35 @@
 Admin endpoints for platform management.
 """
 
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, date
+from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, and_, extract
+
+from src.core.database import get_db
+from src.core.exceptions import AuthorizationError
+from src.models.user import User, UserRole
+from src.models.partner import Partner
+from src.models.reading import Reading
+from src.models.payment import Payment, PaymentStatus
+from src.api.v1.endpoints.auth import get_current_user
 
 router = APIRouter()
 security = HTTPBearer()
+
+
+def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Dependency to require admin role."""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+    return current_user
 
 
 class EarningsRequest(BaseModel):
@@ -33,44 +53,83 @@ class EarningsResponse(BaseModel):
 
 @router.get("/earnings")
 async def get_earnings_report(
-    month: str,
-    partner_slug: Optional[str] = None,
-    token: str = Depends(security)
+    month: str = Query(..., description="Month in YYYY-MM format"),
+    partner_slug: Optional[str] = Query(None, description="Specific partner slug"),
+    admin_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Get earnings report for specified month.
-    
+
     Returns revenue breakdown by partner for the specified month,
     including reading counts, total revenue, and earnings split.
     """
-    # TODO: Implement earnings calculation from database
-    # For now, return mock data
-    
     try:
         # Validate month format
-        datetime.strptime(month, "%Y-%m")
+        year, month_num = month.split("-")
+        year = int(year)
+        month_num = int(month_num)
+        if month_num < 1 or month_num > 12:
+            raise ValueError()
     except ValueError:
         raise HTTPException(status_code=422, detail="Month must be in YYYY-MM format")
-    
-    # Mock earnings data
-    earnings = [
-        EarningsResponse(
-            month=month,
-            partner_slug="metamystic",
-            partner_name="MetaMystic",
-            total_readings=0,
-            total_revenue=0.0,
-            partner_earnings=0.0,
-            platform_earnings=0.0,
-            revenue_share_percentage=0.0
+
+    # Build query for earnings calculation
+    query = (
+        select(
+            Partner.slug,
+            Partner.name,
+            Partner.revenue_share_percentage,
+            func.count(Reading.id).label("total_readings"),
+            func.coalesce(func.sum(Payment.amount), 0).label("total_revenue")
         )
-    ]
-    
+        .select_from(Partner)
+        .outerjoin(Reading, Reading.partner_id == Partner.id)
+        .outerjoin(
+            Payment,
+            and_(
+                Payment.reading_id == Reading.id,
+                Payment.status == PaymentStatus.COMPLETED
+            )
+        )
+        .where(
+            and_(
+                extract("year", Reading.created_at) == year,
+                extract("month", Reading.created_at) == month_num
+            ) if Reading.created_at else True
+        )
+        .group_by(Partner.id, Partner.slug, Partner.name, Partner.revenue_share_percentage)
+    )
+
+    # Filter by specific partner if requested
     if partner_slug:
-        earnings = [e for e in earnings if e.partner_slug == partner_slug]
-        if not earnings:
-            raise HTTPException(status_code=404, detail="Partner not found")
-    
+        query = query.where(Partner.slug == partner_slug)
+
+    result = await db.execute(query)
+    partner_data = result.all()
+
+    if partner_slug and not partner_data:
+        raise HTTPException(status_code=404, detail="Partner not found")
+
+    # Calculate earnings for each partner
+    earnings = []
+    for row in partner_data:
+        total_revenue = float(row.total_revenue or 0)
+        revenue_share = row.revenue_share_percentage / 100
+        partner_earnings = total_revenue * revenue_share
+        platform_earnings = total_revenue * (1 - revenue_share)
+
+        earnings.append(EarningsResponse(
+            month=month,
+            partner_slug=row.slug,
+            partner_name=row.name,
+            total_readings=row.total_readings,
+            total_revenue=total_revenue,
+            partner_earnings=partner_earnings,
+            platform_earnings=platform_earnings,
+            revenue_share_percentage=row.revenue_share_percentage
+        ))
+
     return {
         "success": True,
         "data": {
